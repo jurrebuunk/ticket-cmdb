@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ticket_cmdb
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  web:
+    image: tiangolo/uvicorn-gunicorn-fastapi:python3.11
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/ticket_cmdb
+    volumes:
+      - ./:/app
+    ports:
+      - "8000:80"
+
+volumes:
+  db-data:
